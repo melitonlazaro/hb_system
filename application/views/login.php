@@ -3,11 +3,18 @@
 <head>
 	<title>Hotel Booking System</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+	
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 	<div class="container">
-		<div class="card">
+		<br><br><br><br><br>
+		<div class="card" style="width: 40rem;">
+			<div class="card-header">
+				<center>
+					<strong>Login</strong>
+				</center>
+			</div>
 			<div class="card-body">
 				<?php echo form_open('Main/login'); ?>
 					<label>Username</label>

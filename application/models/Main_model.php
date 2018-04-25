@@ -14,5 +14,68 @@ class Main_model extends CI_Model {
 		$query = $this->db->get('user_account');
 		return $query->row();
 	}
+
+	public function count_vacant_fr()
+	{
+		$availability = "Available";
+		$this->db->select('*');
+		$this->db->from('flat_rate');
+		$this->db->where("availability", $availability);
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	public function count_all_fr()
+	{
+		$this->db->select('*');
+		$this->db->from('flat_rate');
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	public function count_vacant_deluxe()
+	{
+		$availability = "Available";
+		$this->db->select('*');
+		$this->db->from('deluxe');
+		$this->db->where("availability", $availability);
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	public function count_all_deluxe()
+	{
+		$this->db->select('*');
+		$this->db->from('deluxe');
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	public function count_vacant_sd()
+	{
+		$availability = "Available";
+		$this->db->select('*');
+		$this->db->from('super_deluxe');
+		$this->db->where("availability", $availability);
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	public function count_all_sd()
+	{
+		$this->db->select('*');
+		$this->db->from('super_deluxe');
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	public function get_accommodation()
+	{
+		$this->db->select('*');
+		$this->db->from('accommodation');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
 }
 ?>

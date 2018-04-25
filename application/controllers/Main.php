@@ -41,11 +41,13 @@ class Main extends CI_Controller {
 			$this->session->set_userdata($session_data);
 			if($account_type === "Admin")
 			{
-				$this->load->view('admin/admin_dashboard');	
+				redirect('Main/admin_dashboard');
+				// $this->load->view('admin/admin_dashboard');	
 			}
 			elseif($account_type === "Employee")
 			{
-				$this->load->view('employee/employee_dashboard');
+				redirect('Main/employee_dashboard');
+				// $this->load->view('employee/employee_dashboard');
 			}
 		}	
 		else
@@ -64,6 +66,26 @@ class Main extends CI_Controller {
 
 	public function admin_dashboard()
 	{
-		$this->load->view('admin/admin_dashboard');
+		$data["fr_count"] = $this->Main_model->count_vacant_fr();
+		$data["fr_total"] = $this->Main_model->count_all_fr();
+		$data["deluxe_count"] = $this->Main_model->count_vacant_deluxe();
+		$data["deluxe_total"] = $this->Main_model->count_all_deluxe();
+		$data["sd_count"] = $this->Main_model->count_vacant_sd();
+		$data["sd_total"] = $this->Main_model->count_all_sd();
+		$data["accommodation"] = $this->Main_model->get_accommodation();
+		$this->load->view('admin/admin_dashboard', $data);
 	}
+
+	public function employee_dashboard()
+	{
+		$data["fr_count"] = $this->Main_model->count_vacant_fr();
+		$data["fr_total"] = $this->Main_model->count_all_fr();
+		$data["deluxe_count"] = $this->Main_model->count_vacant_deluxe();
+		$data["deluxe_total"] = $this->Main_model->count_all_deluxe();
+		$data["sd_count"] = $this->Main_model->count_vacant_sd();
+		$data["sd_total"] = $this->Main_model->count_all_sd();
+		$this->load->view('employee/employee_dashboard', $data);
+	}
+
 }
+?>
