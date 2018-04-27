@@ -16,10 +16,10 @@
 		  <div class="collapse navbar-collapse" id="navbarNav">
 		    <ul class="navbar-nav mr-auto">
 		      <li class="nav-item active">
-		        <a class="nav-link" href="#">Dashboard<span class="sr-only">(current)</span></a>
+		        <a class="nav-link" href="<?php echo base_url();?>Main/admin_dashboard">Dashboard<span class="sr-only">(current)</span></a>
 		      </li>
 		      <li class="nav-item">
-		        <a class="nav-link" href="#">Prices</a>
+		        <a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting">Prices</a>
 		      </li>
 		    </ul>
 		    <ul class="navbar-nav">
@@ -123,7 +123,10 @@
 				<table id="table1" class="table table-bordered table-striped table-hover">
 					<thead>
 						<tr>
-							<th>Guest Name</th>
+							<th>Guest ID</th>
+							<th>Last Name</th>
+							<th>First Name</th>
+							<th>Middle Initial</th>
 							<th>Contact Number</th>
 							<th>Email</th>
 							<th>Date Registered</th>
@@ -136,11 +139,14 @@
 								echo 
 								'
 									<tr>
-										<td>'.$gl->first_name.' '.$gl->middle_initial.' '.$gl->last_name.'</td>
-										<td>'.$gl->contact_number.'</td>
-										<td>'.$gl->email.'</td>
+										<td class="guest_id">'.$gl->guest_id.'</td>
+										<td class="last_name"> '.$gl->last_name.'</td>
+										<td class="first_name">'.$gl->first_name.' </td>
+										<td class="middle_initial">'.$gl->middle_initial.'</td>
+										<td class="contact_number">'.$gl->contact_number.'</td>
+										<td class="email">'.$gl->email.'</td>
 										<td>'.$gl->date_registered.'</td>
-										<td><button class="btn btn-primary">Select</button></td>
+										<td><button class="btn btn-primary select_guest" >Select</button></td>
 									</tr>
 								';
 							} 
@@ -196,12 +202,17 @@
 								<option>Select Room</option>
 							</select>
 						</div>
+						<div class="col-md-4">
+							<label>Price per Hour</label>
+							<div id="price_per_hour"></div>
+							<input type="text" name="price_per_hour" class="form-control" readonly>
+						</div>
 					</div><br>
 					<div class="row">
 						<div class="col">
 							<label>Check-in Date</label>
 							<?php $min_date = date('Y-m-d'); ?>
-							<input type="date" name="checkin_date" min="<?php echo $min_date;?>" class="form-control">
+							<input type="datetime-local" name="checkin_date" min="<?php echo $min_date;?>" class="form-control">
 						</div>
 						<div class="col">
 							<label>Check-in Time</label>
@@ -213,7 +224,15 @@
 						</div>
 						<div class="col">
 							<label>Checkout Time</label>
-							<input type="time" name="checkout_time" class="form-control">
+							<?php 
+								date_default_timezone_set('Asia/Manila');
+								$time_today = date('H:00');
+								$max_time = DateTime::createFromFormat('H:i', $time_today);
+								$max_time-> add(new DateInterval('PT8H'));
+								$max_checkout_time = $max_time->format('H:i');
+								echo $max_checkout_time; 
+								 ?>
+							<input type="time" name="checkout_time" class="form-control" min="<?php echo $max_checkout_time; ?>" value="<?php echo $max_checkout_time; ?>">
 						</div>
 					</div><br>
 					<div class="row">
@@ -246,7 +265,7 @@
 	        }]
 	      });
 	    });
-	 </script>
+	</script>
 	 <script type="text/javascript">
 	 	$(document).ready(function(){
 	 		$('#profiling_card').hide();
@@ -270,6 +289,36 @@
 	 		$('#guest_option').show();
 	 	});
 	 </script>
+
+	 <script type="text/javascript">
+	 	$('.select_guest').click(function(){
+	 		var $col = $(this).closest("tr");
+	 		var $last_name = $col.find(".last_name").text();
+	 		var $col1 = $(this).closest("tr");
+	 		var $first_name = $col1.find(".first_name").text();
+	 		var $col2 = $(this).closest("tr");
+	 		var $middle_initial = $col2.find(".middle_initial").text();
+	 		var $col3 =  $(this).closest("tr");
+	 		var $contact_number = $col3.find(".contact_number").text();
+	 		var $col4 = $(this).closest("tr");
+	 		var $email = $col4.find(".email").text();
+	 		var $col5 = $(this).closest("tr");
+	 		var $guest_id = $col5.find('.guest_id').text();
+
+	 		
+	 		$('#guest_first_name').val($first_name);
+	 		$('#guest_last_name').val($last_name);
+	 		$('#guest_middle_initial').val($middle_initial);
+	 		$('#guest_contact_number').val($contact_number);
+	 		$('#guest_email').val($email);
+	 		$('#guest_id').val($guest_id);
+	 		$('#book_information').show();
+	 		$('#guests_table').hide();
+			$('#guest_option').hide();
+			
+	 	});
+	 </script>
+
 	 <script type="text/javascript">
 	 	$('#profiling_btn').click(function(event)
 	 	{
@@ -300,7 +349,7 @@
 	 		});
 	 	});
 	 </script>
-	 <script type="text/javascript">
+	<script type="text/javascript">
 	 	$(document).ready(function(){
 	 		$('#room_type').change(function(){
 	 			var room_type = $(this).val();
@@ -313,15 +362,32 @@
 	 				success:function(response){
 
 	 					$('#vacant_room').find('option').not(':first').remove();
-
 	 					$.each(response,function(key, data){
 	 						$('#vacant_room').append('<option value="'+data['room_id']+'">Room '+data['room_id']+' </option>');
-	 						
+	 						// $('#price_per_hour').append('<input type="text" name="price_per_hour" id="price_per_hour" class="form-control" value="'+data['price_per_hour']+'" readonly>')
 	 					});
 	 				}
 	 			});
 	 		});
 	 	});
-	 </script>
+	</script>
+	<script>  
+		$(document).ready(function(){  
+		      $('#email').change(function(){  
+		           var email = $('#email').val();  
+		           if(email != '')  
+		           {  
+		                $.ajax({  
+		                     url:"<?php echo base_url(); ?>Book/check_email_avalibility",  
+		                     method:"POST",  
+		                     data:{email:email},  
+		                     success:function(data){  
+		                          $('#email_result').html(data);  
+		                     }  
+		                });  
+		           }  
+		      });  
+		 });  
+	</script>  
 </body>
 </html>

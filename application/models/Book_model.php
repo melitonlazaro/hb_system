@@ -32,6 +32,16 @@ class Book_model extends CI_Model {
 		return $response;
 	}
 
+	public function get_room_price_mdl($room_type)
+	{
+		$response = array();
+		$this->db->select('price_per_hour');
+		$this->db->from($room_type);
+		$this->db->limit(1);
+		$query = $this->db->get();
+		return $query->result_array();
+	}
+
 	public function insert_accommodation($data)
 	{
 		$query = $this->db->insert('accommodation', $data);
@@ -46,5 +56,29 @@ class Book_model extends CI_Model {
 		$this->db->update($rt);
 		return TRUE;
 	}
+
+	public function change_room_price_mdl($room_type, $price_per_hour)
+	{
+		$this->db->set('price_per_hour', $price_per_hour);
+		$result = $this->db->update($room_type);
+		return $result;
+	}
+
+	public function check_email_availability_mdl($email)
+	{
+		$this->db->select('*');
+		$this->db->from('guest_profile');
+		$query = $this->db->where('email', $email);
+		if($query->num_rows() > 0)
+		{
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+
 }
 ?>

@@ -69,10 +69,67 @@ class Main_model extends CI_Model {
 		return $query->num_rows();
 	}
 
+	public function get_flat_rate()
+	{
+		$this->db->select('*');
+		$this->db->from('flat_rate');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function get_deluxe()
+	{
+		$this->db->select('*');
+		$this->db->from('deluxe');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function get_super_deluxe()
+	{
+		$this->db->select('*');
+		$this->db->from('super_deluxe');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
 	public function get_accommodation()
 	{
 		$this->db->select('*');
 		$this->db->from('accommodation');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function get_fr_price()
+	{
+		$this->db->select('*');
+		$this->db->from('flat_rate');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function get_deluxe_price()
+	{
+		$this->db->select('*');
+		$this->db->from('deluxe');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function get_sd_price()
+	{
+		$this->db->select('*');
+		$this->db->from('super_deluxe');
+		$query = $this->db->get();
+		return $query->result();
+	}
+	
+	public function get_today_checkout($date_today)
+	{
+		$this->db->select('*');
+		$this->db->from('accommodation');
+		$this->db->where('checkout_date', $date_today);
 		$query = $this->db->get();
 		return $query->result();
 	}
