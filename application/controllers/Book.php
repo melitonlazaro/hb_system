@@ -130,7 +130,8 @@ class Book extends CI_Controller {
 		$result = $this->Book_model->insert_accommodation($data);
 		if($result)
 		{
-			$this->Book_model->change_availability($rt, $vr);
+			$availability = "Occupied";
+			$this->Book_model->change_availability($rt, $vr, $availability);
 			
 		}
 		else
@@ -155,7 +156,67 @@ class Book extends CI_Controller {
 
 	public function checkout()
 	{
-		$this->input->post('');
+		$acc_id = $this->input->post('accommodation_id');
+		$acc_gid = $this->input->post('acc_guest_id');
+		$acc_gn = $this->input->post('acc_guest_name');
+		$acc_rmid =$this->input->post('acc_room_id');
+		$acc_rt = $this->input->post('acc_room_type');
+		$acc_adult = $this->input->post('acc_adult');
+		$acc_children = $this->input->post('acc_children');
+		$acc_ci_date = $this->input->post('acc_ci_date');
+		$acc_ci_time = $this->input->post('acc_ci_time');
+		$acc_co_date = $this->input->post('acc_co_date');
+		$acc_co_time = $this->input->post('acc_co_time');
+		$acc_pph = $this->input->post('acc_price_per_hour');
+		$acc_tp = $this->input->post('acc_total_price');
+
+		$data = array(
+						'checkout_id' => NULL,
+						'accommodation_id' => $acc_id,
+						'guest_id' => $acc_gid,
+						'guest_name' => $acc_gn,
+						'room_type' => $acc_rt,
+						'room_id' => $acc_rmid,
+						'price_per_hour' => $acc_pph,
+						'adult' => $acc_adult,
+						'children' => $acc_children,
+						'check_in_date' => $acc_ci_date, 
+						'check_in_time' => $acc_ci_time,
+						'checkout_date' => $acc_co_date,
+						'checkout_time' => $acc_co_time,
+						'total_price'	=> $acc_tp,
+					 );
+		$this->load->model('Book_model');
+		$result =$this->Book_model->checkout_mdl($data);
+		 
+		if($result)
+		{
+			$result1 = $this->Book_model->remove_accommodation($acc_id);
+			if($result1)
+			{
+				$rt = $acc_rt;
+				$vr = $acc_rmid;
+				$availability = "Available";
+				$result2 = $this->Book_model->change_availability($rt, $vr, $availability);
+				if($result2)
+				{
+					redirect('Main/admin_dashboard');
+				}
+				else
+				{
+					exit;
+				}
+			}
+			else
+			{
+				exit;
+			}
+		}
+		else
+		{
+			exit;
+		}
+		
 	}
 	
 	public function test()

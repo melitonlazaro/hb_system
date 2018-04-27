@@ -288,9 +288,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="card">
-					<div class="card-body">
+			<div class="card">
+				<div class="card-body">
+					<div class="row">
 						<div class="col-md-12">
 							<h2><strong>Accommodations</strong></h2>
 							<br>
@@ -377,6 +377,8 @@
 																	<div class="col-md-12">
 																		<label>Guest Name</label>
 																		<input type="hidden" name="accommodation_id" value="'.$ac->accommodation_id.'">
+																		<input type="hidden" value="'.$ac->price_per_hour.'" name="acc_price_per_hour">
+																		<input type="hidden" value="'.$ac->guest_id.'" name="acc_guest_id">
 																		<input type="text" name="acc_guest_name" value="'.$ac->guest_name.'" class="form-control" readonly>
 																	</div>
 																	<div class="col-md-6">
@@ -429,7 +431,7 @@
 																		<div class="pull-right">
 																			<div class="input-group">
 																				<div class="input-group-text">P</div>
-																				<input type="text" class="form-control-lg" value="'.$total_price.'" readonly>
+																				<input type="text" class="form-control-lg" value="'.$total_price.'" name="acc_total_price" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -449,6 +451,32 @@
 									?>
 								</tbody>
 							</table>	
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-md-12">
+							<h2><strong>Recent Checkout</strong></h2>
+							<table id="table2" class="table table-hover table-striped table-bordered">
+								<thead>
+									<tr>
+										<td>Guest Name</td>
+										<td>Room Number</td>
+										<td>Room Type</td>
+										<td>Adult</td>
+										<td>Child</td>
+										<td>Check-in Date</td>
+										<td>Check-in Time</td>
+										<td>Checkout Date</td>
+										<td>Checkout Time</td>
+										<td>Amount Paid</td>
+										<td>Action</td>
+									</tr>
+								</thead>
+								<tbody>
+									FOREACH RECENT CHECKOUTS
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>

@@ -96,6 +96,14 @@
 							</div><br>
 							<div class="row">
 								<div class="col-md-3">
+									<label>Date of Birth</label>
+								</div>
+								<div class="col-md-9">
+									<input type="date" name="date_of_birth" id="date_of_birth" class="form-control">
+								</div>
+							</div><br>
+							<div class="row">
+								<div class="col-md-3">
 									<label>Email Address</label>
 								</div>
 								<div class="col-md-9">
@@ -144,6 +152,7 @@
 										<td class="first_name">'.$gl->first_name.' </td>
 										<td class="middle_initial">'.$gl->middle_initial.'</td>
 										<td class="contact_number">'.$gl->contact_number.'</td>
+										<td class="date_of_birth">'.$gl->date_of_birth.'</td>
 										<td class="email">'.$gl->email.'</td>
 										<td>'.$gl->date_registered.'</td>
 										<td><button class="btn btn-primary select_guest" >Select</button></td>

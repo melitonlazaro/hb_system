@@ -48,9 +48,8 @@ class Book_model extends CI_Model {
 		return $query;
 	}
 
-	public function change_availability($rt, $vr)
+	public function change_availability($rt, $vr, $availability)
 	{
-		$availability = "Occupied";
 		$this->db->set('availability', $availability);
 		$this->db->where('room_id', $vr);
 		$this->db->update($rt);
@@ -62,6 +61,19 @@ class Book_model extends CI_Model {
 		$this->db->set('price_per_hour', $price_per_hour);
 		$result = $this->db->update($room_type);
 		return $result;
+	}
+
+	public function checkout_mdl($data)
+	{
+		$query = $this->db->insert('checkout', $data);
+		return $query;
+	}
+
+	public function remove_accommodation($acc_id)
+	{
+		$data = array('accommodation_id' => $acc_id);
+		$query = $this->db->delete('accommodation', $data);
+		return $query;
 	}
 
 	public function check_email_availability_mdl($email)
