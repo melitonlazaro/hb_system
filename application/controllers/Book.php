@@ -13,70 +13,75 @@ class Book extends CI_Controller {
 
 	public function guest_profiling()
 	{
+		$this->load->library('form_validation');
 		$first_name = $this->input->post('first_name');
 		$last_name = $this->input->post('last_name');
 		$middle_initial = $this->input->post('middle_initial');
 		$contact_number = $this->input->post('contact_number');
+		$date_of_birth = $this->input->post('date_of_birth');
 		$email = $this->input->post('email');
 		$date_registered = date('Y-m-d');
-
-		$data = array(
+		$this->form_validation->set_rules('email', 'Email', 'required|trim|xss_clean|is_unique[guest_profile.email]');
+		$this->load->helper('email');
+		if(valid_email($email))
+		{
+			$this->load->model('Book_model');
+			if($email_result)
+			{
+				$data = array(
 						'guest_id' => NULL,
 						'first_name' => $first_name,
 						'last_name' => $last_name,
 						'middle_initial' => $middle_initial,
 						'contact_number' => $contact_number,
+						'date_of_birth' => $date_of_birth,
 						'email' => $email,
 						'date_registered' => $date_registered
 					 );
-		$this->load->model('Book_model');
-		$result = $this->Book_model->guest_profiling_mdl($data);
-		if($result)
-		{
-			// return $result;
-			// echo json_encode(['res' => $result]);
-			// exit;
-			echo $result;
-		}
-		else
-		{
-			$this->db->error();
-		}
-	}
-
-	public function check_email_availability()
-	{
-		$this->load->model('Book_model');
-		$email = $this->input->post('email');
-		if(!filter_var($email, FILTER_VALIDATE_EMAIL))	
-		{
-			echo '<label class="text-danger">
-					<span><i class="fa fa-times"></i> Email not valid </span>
-				  </label>
-				  ';
-		}
-		else
-		{
-			$result = $this->Book_model->check_email_availability_mdl($email);
-			if($result)
-			{
-				echo 
-				'
-					<label class="text-danger">
-						<span><i class="fa fa-times"></i> Email already registered. </span>
-				    </label>
-				';
+				$this->load->model('Book_model');
+				$result = $this->Book_model->guest_profiling_mdl($data);
+				if($result)
+				{
+					// return $result;
+					// echo json_encode(['res' => $result]);
+					// exit;
+					echo $result;
+				}
+				else
+				{
+					$this->db->error();
+				}
 			}
 			else
 			{
-				echo 
-				'
-				<label class="text-success">
-					<span><i class="fa fa-check"></i> Email is available.</span>
-				</label>
-				';
+				$this->session->set_flashdata('taken_email', 'Email already taken. Please enter another email.');
+				redirect('Book');
 			}
+		}	
+		else
+		{
+			$this->sessin->set_flashdata('invalid_email', 'Invalid email. Please enter a valid email');
+			redirect('Book');
 		}
+	}
+
+	public function email_form_validation()
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('email');
+		$email = $this->input->post('email');
+			$this->form_validation->set_rules('email', 'Email', 'is_unique[guest_profile.email]');
+			if($this->form_validation->run() == FALSE)
+			{
+				// $validates = validation_errors();
+				$validates = 1;
+			}
+			else
+			{
+				$validates = 0;
+			}
+			echo $validates;
+			exit;
 	}
 
 	public function get_vacant_room()
@@ -231,13 +236,32 @@ class Book extends CI_Controller {
 		// $this->load->model('Book_model');
 		// $result = $this->Book_model->get_room_price_mdl($room_type);
 		// print_r($result);
-		$this->load->model('Book_model');
-		date_default_timezone_set('Asia/Manila');
-		$date_today = date('Y-m-d');
-		$time_today = date('H:i');
+		// $this->load->model('Book_model');
+		// date_default_timezone_set('Asia/Manila');
+		// $date_today = date('Y-m-d');
+		// $time_today = date('H:i');
 
-		$data = $this->Main_model->get_today_checkout($date_today);
-		print_r($data);
+		// $data = $this->Main_model->get_today_checkout($date_today);
+		// print_r($data);
+		$email = $this->input->post('email');
+		$this->load->helper('email');
+		if(valid_email($email))
+		{
+			$this->load->model('Book_model');
+			$result = $this->Book_model->check_email_availability_mdl($email);
+			if($result)
+			{
+				echo "Email already taken. please enter another email.";
+			}
+			else
+			{
+				echo "valid email";
+			}
+		}
+		else
+		{
+			echo "invalid email";
+		}
 	}
 
 	public function test2()

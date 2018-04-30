@@ -345,6 +345,13 @@
 												<tr>
 											';
 										}
+										if($date_today > $ac->checkout_date)
+										{
+											echo
+											'
+												<tr class="table-danger">
+											';
+										}
 										echo '
 												<td> '.$ac->guest_name.' </td>
 												<td> '.$ac->room_type.' </td>
@@ -474,7 +481,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									FOREACH RECENT CHECKOUTS
+									FOREACH RECENT CHECKOUTS	
 								</tbody>
 							</table>
 						</div>

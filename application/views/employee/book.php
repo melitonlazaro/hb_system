@@ -42,6 +42,26 @@
 					<h2><strong>Hotel Booking System</strong></h2>
 				</div>
 				<div class="card-body">
+					<?php 
+					if($this->session->flashdata('taken_email'))
+						{
+							echo 
+							'
+								<div class="alert alert-warning">
+									<p>'.$this->session->flashdata('taken_email').'</p>
+								</div>
+							';
+						}
+						elseif($this->session->flashdata('taken_email'))
+						{
+							echo 
+							'
+								<div class="alert alert-warning">
+									<p>'.$this->session->flashdata('invalid_email').'</p>
+								</div>
+							';
+						}
+					?>
 					<button class="btn btn-outline-primary btn-block" id="create_new">Create New Guest Profile</button>	
 					<br>
 					<button class="btn btn-outline-primary btn-block" id="choose_existing">Choose Existing Guest Profile</button>
@@ -56,6 +76,7 @@
 							<button class="btn btn-primary btn-sm" id="return_to_option1">Return</button>
 						</div>
 						<br><br>
+						<?php echo validation_errors(); ?>
 						<?php 
 							echo form_open('Book/guest_profiling'); ?>
 							<div class="pull-left">
@@ -67,7 +88,7 @@
 									<label>Last Name</label>
 								</div>
 								<div class="col-md-9">
-									<input type="text" name="last_name" id="last_name" class="form-control" >
+									<input type="text" name="last_name" id="last_name" class="form-control" required>
 								</div>
 							</div><br>
 							<div class="row">
@@ -75,7 +96,7 @@
 									<label>First Name</label>
 								</div>
 								<div class="col-md-9">
-									<input type="text" name="first_name" id="first_name" class="form-control">
+									<input type="text" name="first_name" id="first_name" class="form-control" required>
 								</div>
 							</div><br>
 							<div class="row">
@@ -83,7 +104,7 @@
 									<label>Middle Initial</label>
 								</div>
 								<div class="col-md-3">
-									<input type="text" name="middle_initial" id="middle_initial" class="form-control">
+									<input type="text" name="middle_initial" id="middle_initial" class="form-control" required>
 								</div>
 							</div><br>
 							<div class="row">
@@ -91,7 +112,7 @@
 									<label>Contact Number</label>
 								</div>
 								<div class="col-md-9">
-									<input type="text" name="contact_number" id="contact_number" class="form-control">
+									<input type="text" name="contact_number" id="contact_number" class="form-control" required>
 								</div>
 							</div><br>
 							<div class="row">
@@ -99,7 +120,7 @@
 									<label>Date of Birth</label>
 								</div>
 								<div class="col-md-9">
-									<input type="date" name="date_of_birth" id="date_of_birth" class="form-control">
+									<input type="date" name="date_of_birth" id="date_of_birth" class="form-control" required>
 								</div>
 							</div><br>
 							<div class="row">
@@ -107,7 +128,7 @@
 									<label>Email Address</label>
 								</div>
 								<div class="col-md-9">
-									<input type="text" name="email" id="email" class="form-control">
+									<input type="text" name="email" id="email" class="form-control" required>
 								</div>
 							</div>
 							<br>
@@ -136,6 +157,7 @@
 							<th>First Name</th>
 							<th>Middle Initial</th>
 							<th>Contact Number</th>
+							<th>Date of Birth</th>
 							<th>Email</th>
 							<th>Date Registered</th>
 							<th>Action</th>
@@ -327,7 +349,31 @@
 			
 	 	});
 	 </script>
-
+	 <script>
+		$(document).ready(function(){
+		    $("#email").keyup(function(){
+		        var email = $('#email').val();
+		        $.ajax({
+		        	type: "POST",
+		        	url: "<?php echo site_url();?>Book/email_form_validation",
+		        	data: {email:email},
+		        	success:function(data)
+		        	{
+		        		if($data = 1)
+		        		{
+		        			console.log(data)
+		        			$('#email').addClass("is-valid");
+		        		}	
+		        		else
+		        		{
+		        			console.log(data)
+		        			$('#email').addClass("is-invalid");
+		        		}
+		        	}
+		        });
+		    });
+		});
+	</script>
 	 <script type="text/javascript">
 	 	$('#profiling_btn').click(function(event)
 	 	{
@@ -336,12 +382,13 @@
 	 		var last_name = $('#last_name').val();
 	 		var middle_initial = $('#middle_initial').val();
 	 		var contact_number = $('#contact_number').val();
+	 		var date_of_birth = $('#date_of_birth').val();
 	 		var email = $('#email').val();
 
 	 		$.ajax({
 	 			type: "POST",
 	 			url: "<?php echo site_url(); ?>Book/guest_profiling",
-	 			data: {first_name:first_name, last_name:last_name, middle_initial:middle_initial, contact_number:contact_number, email:email},
+	 			data: {first_name:first_name, last_name:last_name, middle_initial:middle_initial, contact_number:contact_number, date_of_birth:date_of_birth,  email:email},
 	 			success:function(data)
 	 			{
 	 				alert("Success!")
@@ -380,23 +427,5 @@
 	 		});
 	 	});
 	</script>
-	<script>  
-		$(document).ready(function(){  
-		      $('#email').change(function(){  
-		           var email = $('#email').val();  
-		           if(email != '')  
-		           {  
-		                $.ajax({  
-		                     url:"<?php echo base_url(); ?>Book/check_email_avalibility",  
-		                     method:"POST",  
-		                     data:{email:email},  
-		                     success:function(data){  
-		                          $('#email_result').html(data);  
-		                     }  
-		                });  
-		           }  
-		      });  
-		 });  
-	</script>  
 </body>
 </html>
