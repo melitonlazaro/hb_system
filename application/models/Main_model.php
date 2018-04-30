@@ -134,5 +134,30 @@ class Main_model extends CI_Model {
 		return $query->result();
 	}
 
+	public function get_recent_checkouts()
+	{
+		$this->db->select('*');
+		$this->db->from('checkout');
+		$this->db->limit(5);
+		$query = $this->db->get();
+		return $query->result(); 
+	}
+
+	public function get_all_checkout()
+	{
+		$this->db->select('*');
+		$this->db->from('checkout');
+		$query = $this->db->get();
+		return $query->result(); 
+	}
+
+	public function get_checkout_details($checkout_id)
+	{
+		$this->db->select('*');
+		$this->db->where('checkout_id', $checkout_id);
+		$this->db->from('checkout');
+		$query = $this->db->get();
+		return $query->row();
+	}
 }
 ?>

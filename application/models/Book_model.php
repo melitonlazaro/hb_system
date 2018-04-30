@@ -39,7 +39,7 @@ class Book_model extends CI_Model {
 		$this->db->from($room_type);
 		$this->db->limit(1);
 		$query = $this->db->get();
-		return $query->result_array();
+		return $query->row();
 	}
 
 	public function insert_accommodation($data)

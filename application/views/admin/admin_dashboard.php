@@ -325,6 +325,7 @@
 										{
 											if($time_today >= $ac->checkout_time)
 											{
+												$overstaying = TRUE;
 												echo 
 												'
 													<tr class="table-danger">
@@ -332,24 +333,26 @@
 											}
 											elseif($time_today >= $co_warning_time && $time_today < $ac->checkout_time)
 											{
+
 												echo 
 												'
 													<tr class="table-warning">
 												';
 											}
 										}
+										elseif($date_today > $ac->checkout_date)
+										{
+											$overstaying = TRUE;
+											echo 
+											'
+												<tr class="table-danger">
+											';
+										}
 										else
 										{
 											echo 
 											'
 												<tr>
-											';
-										}
-										if($date_today > $ac->checkout_date)
-										{
-											echo
-											'
-												<tr class="table-danger">
 											';
 										}
 										echo '
@@ -421,26 +424,67 @@
 																		<input type="text" name="acc_co_time" value="'.$ac->checkout_time.'" class="form-control" readonly>
 																	</div>
 																	<br><br>';
-																	$combined_ci = $ac->check_in_date.' '.$ac->check_in_time; //combined date and time of check-in
-																	$combined_co = $ac->checkout_date.' '.$ac->checkout_time; //combined date and time of checkout
-																	$ci_hours = new DateTime($combined_ci);
-																	$co_hours = new DateTime($combined_co);
-																	$interval = $ci_hours->diff($co_hours);
-																	$total_hours = $interval->h;
-																	$total_hours = $total_hours + ($interval->days*24); //converts number of days into hours
-																	// echo $total_hours;
-																	$total_price = $total_hours * $ac->price_per_hour;
+																		$combined_ci = $ac->check_in_date.' '.$ac->check_in_time;
+																		$ci_hours = new DateTime($combined_ci);
+																		$overstay_limit_minutes = date('H:10');
+
+																	if($time_today > $overstay_limit_minutes)
+																	{
+																		$adjusted_overstay_hours = DateTime::createFromFormat('H:i', $time_today);
+																		$adjusted_overstay_hours->add(new DateInterval('PT1H'));
+																		$adjust_os_hour = $adjusted_overstay_hours->format('H:00');
+																	}
+																	else
+																	{
+																		$adjust_os_hour = date('H:00');
+																	}
+
+																	if(isset($overstaying))
+																	{
+																		$overstaying_datetime = $date_today.' '.$adjust_os_hour;
+																		$overstaying_hours = new DateTime($overstaying_datetime);
+																		$overstaying_interval = $ci_hours->diff($overstaying_hours);
+																		$total_hours = $overstaying_interval->h;
+																		$total_hours = $total_hours + ($overstaying_interval->days*24);
+																		$total_price = $total_hours * $ac->price_per_hour;
+																	}
+																	else
+																	{
+																		 //combined date and time of check-in
+																		$combined_co = $ac->checkout_date.' '.$ac->checkout_time; //combined date and time of checkout
+																		$co_hours = new DateTime($combined_co);
+																		$interval = $ci_hours->diff($co_hours);
+																		$total_hours = $interval->h;
+																		$total_hours = $total_hours + ($interval->days*24); //converts number of days into hours
+																		// echo $total_hours;
+																		$total_price = $total_hours * $ac->price_per_hour;
+																	}
 										echo
 										'							
 																	<div class="col-md-12 text-right">
-																		<label>Total Payment </label>
+																		<label>Total Payment </label>';
+																		if(isset($overstaying))
+																		{
+																			echo 
+																			'
+																			<p class="text-danger"><strong>Overstayed</strong></p>
+																			<p><strong> Checkout Date Time: </strong> '.$overstaying_datetime.'</p>
+																			<input type="hidden" name="overstayed_checkout_date" value="'.$date_today.'">
+																			<input type="hidden" name="overstayed_checkout_time" value="'.$adjust_os_hour.'">
+																			';
+																		}
+																		else
+																		{}
+																			echo '
 																			<p>Number of hours: <strong> '.$total_hours.' </strong> * Price per hour: <strong> '.$ac->price_per_hour.' </strong></p>
-																		<div class="pull-right">
-																			<div class="input-group">
-																				<div class="input-group-text">P</div>
-																				<input type="text" class="form-control-lg" value="'.$total_price.'" name="acc_total_price" readonly>
+																			<div class="pull-right">
+																				<div class="input-group">
+																					<div class="input-group-text">P</div>
+																					<input type="text" class="form-control-lg" value="'.$total_price.'" name="acc_total_price" readonly>
+																				</div>
 																			</div>
-																		</div>
+																			';
+										echo '
 																	</div>
 																</div>
 															</div>
@@ -461,6 +505,10 @@
 						</div>
 					</div>
 					<br>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body">
 					<div class="row">
 						<div class="col-md-12">
 							<h2><strong>Recent Checkout</strong></h2>
@@ -468,8 +516,8 @@
 								<thead>
 									<tr>
 										<td>Guest Name</td>
-										<td>Room Number</td>
 										<td>Room Type</td>
+										<td>Room Number</td>
 										<td>Adult</td>
 										<td>Child</td>
 										<td>Check-in Date</td>
@@ -477,13 +525,32 @@
 										<td>Checkout Date</td>
 										<td>Checkout Time</td>
 										<td>Amount Paid</td>
-										<td>Action</td>
 									</tr>
 								</thead>
 								<tbody>
-									FOREACH RECENT CHECKOUTS	
+									<?php foreach ($recent_checkout as $rc) 
+									{
+										echo 
+										'	
+										<tr>
+											<td>'.$rc->guest_name.'</td>
+											<td>'.$rc->room_type.'</td>
+											<td>'.$rc->room_id.'</td>
+											<td>'.$rc->adult.'</td>
+											<td>'.$rc->children.'</td>
+											<td>'.$rc->check_in_date.'</td>
+											<td>'.$rc->check_in_time.'</td>
+											<td>'.$rc->checkout_date.'</td>
+											<td>'.$rc->checkout_time.'</td>
+											<td>'.$rc->total_price.'</td>
+										</tr>
+										';
+									} ?>
 								</tbody>
 							</table>
+							<div class="pull-right">
+								<a href="<?php echo base_url();?>Main/list_of_checkout"><button class="btn btn-primary">See All</button></a>
+							</div>
 						</div>
 					</div>
 				</div>

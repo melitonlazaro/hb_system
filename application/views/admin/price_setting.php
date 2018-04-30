@@ -20,7 +20,7 @@
 		        	<a class="nav-link" href="<?php echo base_url();?>Main/admin_dashboard?>">Dashboard<span class="sr-only">(current)</span></a>
 		      	</li>
 		      	<li class="nav-item">
-		        	<a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting ?>">Prices</a>
+		        	<a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting ?>">Room Prices</a>
 		      	</li>
 		      	<li class="nav-item">
 		        	<a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>

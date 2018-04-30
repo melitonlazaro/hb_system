@@ -92,13 +92,6 @@ class Book extends CI_Controller {
 		echo json_encode($data);
 	}
 
-	public function get_room_price()
-	{
-		$room_type = $this->input->post('room_type');
-		$this->load->model('Book_model');
-		$data =	$this->Book_model->get_room_price_mdl($room_type);
-		echo json_encode($data);
-	}
 
 	public function guest_accommodation()
 	{
@@ -117,6 +110,8 @@ class Book extends CI_Controller {
 		$ac = $this->input->post('adult_count');
 		$cc = $this->input->post('child_count');
 		
+		$rp = $this->get_room_price($rt);
+
 		$this->load->model('Book_model');
 		$data = array(
 						'accommodation_id' => NULL,
@@ -124,6 +119,7 @@ class Book extends CI_Controller {
 						'guest_name' => $full_name,
 						'room_id' => $vr,
 						'room_type' => $rt,
+						'price_per_hour' => $rp->price_per_hour,
 						'contact_number' => $cn,
 						'adult' => $ac,
 						'children' => $cc,
@@ -143,6 +139,14 @@ class Book extends CI_Controller {
 		{
 			$this->db->error();
 		}
+	}
+
+	public function get_room_price($rt)
+	{
+		$rt = "flat_rate";
+		$this->load->model('Book_model');
+		$data =	$this->Book_model->get_room_price_mdl($rt);
+		return $data;
 	}
 
 	public function change_room_price()
@@ -174,8 +178,12 @@ class Book extends CI_Controller {
 		$acc_co_time = $this->input->post('acc_co_time');
 		$acc_pph = $this->input->post('acc_price_per_hour');
 		$acc_tp = $this->input->post('acc_total_price');
+		$acc_os_date = $this->input->post('overstayed_checkout_date');
+		$acc_os_time = $this->input->post('overstayed_checkout_time');
 
-		$data = array(
+		if(isset($acc_os_date, $acc_os_time))
+		{
+			$data = array(
 						'checkout_id' => NULL,
 						'accommodation_id' => $acc_id,
 						'guest_id' => $acc_gid,
@@ -187,10 +195,30 @@ class Book extends CI_Controller {
 						'children' => $acc_children,
 						'check_in_date' => $acc_ci_date, 
 						'check_in_time' => $acc_ci_time,
-						'checkout_date' => $acc_co_date,
-						'checkout_time' => $acc_co_time,
+						'checkout_date' => $acc_os_date,
+						'checkout_time' => $acc_os_time,
 						'total_price'	=> $acc_tp,
 					 );
+		}
+		else
+		{
+			$data = array(
+							'checkout_id' => NULL,
+							'accommodation_id' => $acc_id,
+							'guest_id' => $acc_gid,
+							'guest_name' => $acc_gn,
+							'room_type' => $acc_rt,
+							'room_id' => $acc_rmid,
+							'price_per_hour' => $acc_pph,
+							'adult' => $acc_adult,
+							'children' => $acc_children,
+							'check_in_date' => $acc_ci_date, 
+							'check_in_time' => $acc_ci_time,
+							'checkout_date' => $acc_co_date,
+							'checkout_time' => $acc_co_time,
+							'total_price'	=> $acc_tp,
+						 );
+		}
 		$this->load->model('Book_model');
 		$result =$this->Book_model->checkout_mdl($data);
 		 
@@ -242,26 +270,8 @@ class Book extends CI_Controller {
 		// $time_today = date('H:i');
 
 		// $data = $this->Main_model->get_today_checkout($date_today);
-		// print_r($data);
-		$email = $this->input->post('email');
-		$this->load->helper('email');
-		if(valid_email($email))
-		{
-			$this->load->model('Book_model');
-			$result = $this->Book_model->check_email_availability_mdl($email);
-			if($result)
-			{
-				echo "Email already taken. please enter another email.";
-			}
-			else
-			{
-				echo "valid email";
-			}
-		}
-		else
-		{
-			echo "invalid email";
-		}
+
+
 	}
 
 	public function test2()

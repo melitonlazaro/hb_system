@@ -16,10 +16,28 @@
 		  <div class="collapse navbar-collapse" id="navbarNav">
 		    <ul class="navbar-nav mr-auto">
 		      <li class="nav-item active">
-		        <a class="nav-link" href="<?php echo base_url();?>Main/admin_dashboard">Dashboard<span class="sr-only">(current)</span></a>
+		      	<?php if($this->session->userdata('account_type') === "Admin")
+		      	{ ?>
+		        	<a class="nav-link" href="<?php echo base_url();?>Main/admin_dashboard">Dashboard<span class="sr-only">(current)</span></a>
+		      	<?php 
+		      	}
+		      	elseif($this->session->userdata('account_type') === "Employee"){ ?>
+		        	<a class="nav-link" href="<?php echo base_url();?>Main/employee_dashboard">Dashboard<span class="sr-only">(current)</span></a>
+		      	<?php 
+		      	} ?>
 		      </li>
 		      <li class="nav-item">
-		        <a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting">Prices</a>
+		      	<?php if($this->session->userdata('account_type') === "Admin")
+		      	{?>
+		       		<a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting">Room Prices</a>
+		       	<?php }
+		       	else
+		       	{
+
+		       	} ?>
+		      </li>
+		      <li class="nav-item">
+		        <a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
 		      </li>
 		    </ul>
 		    <ul class="navbar-nav">
@@ -233,17 +251,12 @@
 								<option>Select Room</option>
 							</select>
 						</div>
-						<div class="col-md-4">
-							<label>Price per Hour</label>
-							<div id="price_per_hour"></div>
-							<input type="text" name="price_per_hour" class="form-control" readonly>
-						</div>
 					</div><br>
 					<div class="row">
 						<div class="col">
 							<label>Check-in Date</label>
 							<?php $min_date = date('Y-m-d'); ?>
-							<input type="datetime-local" name="checkin_date" min="<?php echo $min_date;?>" class="form-control">
+							<input type="date" name="checkin_date" min="<?php echo $min_date;?>" class="form-control">
 						</div>
 						<div class="col">
 							<label>Check-in Time</label>
@@ -261,19 +274,18 @@
 								$max_time = DateTime::createFromFormat('H:i', $time_today);
 								$max_time-> add(new DateInterval('PT8H'));
 								$max_checkout_time = $max_time->format('H:i');
-								echo $max_checkout_time; 
 								 ?>
-							<input type="time" name="checkout_time" class="form-control" min="<?php echo $max_checkout_time; ?>" value="<?php echo $max_checkout_time; ?>">
+							<input type="time" name="checkout_time" class="form-control" value="<?php echo $max_checkout_time; ?>">
 						</div>
 					</div><br>
 					<div class="row">
 						<div class="col-md-3">
 							<label>Adult Count</label>
-							<input type="number" name="adult_count" class="form-control">
+							<input type="number" name="adult_count" class="form-control" min="0">
 						</div>
 						<div class="col-md-3">
 							<label>Child Count</label>
-							<input type="number" name="child_count" class="form-control">
+							<input type="number" name="child_count" class="form-control" min="0">
 						</div>
 					</div>
 					<div class="pull-right">

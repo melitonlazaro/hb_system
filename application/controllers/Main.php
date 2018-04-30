@@ -76,6 +76,7 @@ class Main extends CI_Controller {
 		$data["deluxe_details"] = $this->Main_model->get_deluxe();
 		$data["sd_details"] = $this->Main_model->get_super_deluxe();
 		$data["accommodation"] = $this->Main_model->get_accommodation();
+		$data["recent_checkout"] = $this->Main_model->get_recent_checkouts();
 		date_default_timezone_set('Asia/Manila');
 		$date_today = date('Y-m-d');
 		$data["co_details"] = $this->Main_model->get_today_checkout($date_today);
@@ -90,6 +91,12 @@ class Main extends CI_Controller {
 		$data["deluxe_total"] = $this->Main_model->count_all_deluxe();
 		$data["sd_count"] = $this->Main_model->count_vacant_sd();
 		$data["sd_total"] = $this->Main_model->count_all_sd();
+		$data["fr_details"] = $this->Main_model->get_flat_rate();
+		$data["deluxe_details"] = $this->Main_model->get_deluxe();
+		$data["sd_details"] = $this->Main_model->get_super_deluxe();
+		date_default_timezone_set('Asia/Manila');
+		$date_today = date('Y-m-d');
+		$data["co_details"] = $this->Main_model->get_today_checkout($date_today);
 		$this->load->view('employee/employee_dashboard', $data);
 	}
 
@@ -99,6 +106,19 @@ class Main extends CI_Controller {
 		$data["deluxe_price"] = $this->Main_model->get_deluxe_price();
 		$data["sd_price"] = $this->Main_model->get_sd_price();
 		$this->load->view('admin/price_setting', $data);
+	}
+
+	public function list_of_checkout()
+	{
+		$data["all_co"] = $this->Main_model->get_all_checkout();
+		$this->load->view('checkout',$data);
+	}
+
+	public function create_soa($checkout_id)
+	{
+		$data["co_details"] = $this->Main_model->get_checkout_details($checkout_id);
+		// print_r($data);
+		$this->load->view('soa', $data);
 	}
 
 }
