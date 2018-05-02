@@ -109,39 +109,58 @@ class Book extends CI_Controller {
 		$cot = $this->input->post('checkout_time');
 		$ac = $this->input->post('adult_count');
 		$cc = $this->input->post('child_count');
-		
 		$rp = $this->get_room_price($rt);
 
-		$this->load->model('Book_model');
-		$data = array(
-						'accommodation_id' => NULL,
-						'guest_id' => $guest_id,
-						'guest_name' => $full_name,
-						'room_id' => $vr,
-						'room_type' => $rt,
-						'price_per_hour' => $rp->price_per_hour,
-						'contact_number' => $cn,
-						'adult' => $ac,
-						'children' => $cc,
-						'check_in_date' => $cd,
-						'check_in_time' => $ct,
-						'checkout_date' => $cod,
-						'checkout_time' => $cot
-					 );
-		$result = $this->Book_model->insert_accommodation($data);
-		if($result)
+		$checkin_datetime = $cd.' '.$ct;
+		$checkout_datetime = $cod.' '.$ct;
+		$ci_datetime = DateTime::createFromFormat('Y-m-d H:i', $checkin_datetime);
+		$co_datetime = DateTime::createFromFormat('Y-m-d H:i', $checkout_datetime);
+		$ci_datetime->add(new DateInterval('PT8H'));
+		$ci_datetime_converted = $ci_datetime->format('Y-m-d H:i');
+
+		if($ci_datetime_converted < $checkout_datetime)
 		{
-			$availability = "Occupied";
-			$this->Book_model->change_availability($rt, $vr, $availability);
-			$activity = "Accommodated a guest";
-			$activity_id = $result;
-			$this->Main_model->insert_activity_log($activity, $activity_id);
-			
+			$this->load->model('Book_model');
+			$data = array(
+							'accommodation_id' => NULL,
+							'guest_id' => $guest_id,
+							'guest_name' => $full_name,
+							'room_id' => $vr,
+							'room_type' => $rt,
+							'price_per_hour' => $rp->price_per_hour,
+							'contact_number' => $cn,
+							'adult' => $ac,
+							'children' => $cc,
+							'check_in_date' => $cd,
+							'check_in_time' => $ct,
+							'checkout_date' => $cod,
+							'checkout_time' => $cot
+						 );
+			$result = $this->Book_model->insert_accommodation($data);
+			if($result)
+			{
+				$availability = "Occupied";
+				$this->Book_model->change_availability($rt, $vr, $availability);
+				$activity = "Accommodated a guest";
+				$activity_id = $result;
+				$this->Main_model->insert_activity_log($activity, $activity_id);
+			}
+			else
+			{
+				$this->db->error();
+			}
 		}
 		else
 		{
-			$this->db->error();
+			echo 
+			'
+				<h2>
+					Error! 8 hours minimum stay.
+				</h2>
+			';
 		}
+
+		
 	}
 
 	public function get_room_price($rt)
@@ -156,7 +175,7 @@ class Book extends CI_Controller {
 	{
 		$room_type = $this->input->post('room_type');
 		$price_per_hour = $this->input->post('price_per_hour');
-		
+		$this->load->model('Book_model');
 		$result = $this->Book_model->change_room_price_mdl($room_type, $price_per_hour);
 
 		if($result)
@@ -280,8 +299,24 @@ class Book extends CI_Controller {
 		// $time_today = date('H:i');
 
 		// $data = $this->Main_model->get_today_checkout($date_today);
+		$checkin_datetime = "2018-05-02 13:00";
+		$checkout_datetime = "2018-05-02 17:00";
+		$ci_datetime = DateTime::createFromFormat('Y-m-d H:i', $checkin_datetime);
+		$co_datetime = DateTime::createFromFormat('Y-m-d H:i', $checkout_datetime);
+		$ci_datetime->add(new DateInterval('PT8H'));
+		$ci_datetime_converted = $ci_datetime->format('Y-m-d H:i');
+		echo "checkout_minimum $ci_datetime_converted";
+		echo "<br>";
+		echo "Checkout Datettime $checkout_datetime";
 
-
+		if($ci_datetime_converted < $checkout_datetime)
+		{
+			echo "yes";
+		}
+		else
+		{
+			echo "no";
+		}
 	}
 
 	public function test2()
