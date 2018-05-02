@@ -39,6 +39,9 @@
 		      	<li class="nav-item">
 		        	<a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
 		      	</li>
+		      	<li class="nav-item">
+			        <a class="nav-link" href="<?php echo base_url(); ?>Main/list_of_checkout">Checkout</a>
+		      	</li>
 	        	<li class="nav-item">
 		      		<?php if($this->session->userdata('account_type') === "Admin") 
 		      		{?>

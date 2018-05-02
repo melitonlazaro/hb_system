@@ -26,6 +26,9 @@
 	        	<a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
 	      	</li>
 	      	<li class="nav-item">
+		        <a class="nav-link" href="<?php echo base_url(); ?>Main/list_of_checkout">Checkout</a>
+	      	</li>
+	      	<li class="nav-item">
 	      		<a class="nav-link" href="<?php echo base_url();?>Main/activity_log"> Activity Log</a>	
 	      	</li>
 	    </ul>
@@ -455,7 +458,7 @@
 																		$adjust_os_hour = date('H:00');
 																	}
 
-																	if(isset($overstaying))
+																	if($overstaying == TRUE)
 																	{
 																		$overstaying_datetime = $date_today.' '.$adjust_os_hour;
 																		$overstaying_hours = new DateTime($overstaying_datetime);
@@ -479,7 +482,7 @@
 										'							
 																	<div class="col-md-12 text-right">
 																		<label>Total Payment </label>';
-																		if(isset($overstaying))
+																		if($overstaying == TRUE)
 																		{
 																			echo 
 																			'
