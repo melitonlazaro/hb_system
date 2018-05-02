@@ -25,6 +25,9 @@
 		      	<li class="nav-item">
 		        	<a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
 		      	</li>
+		      	<li class="nav-item">
+		      		<a class="nav-link" href="<?php echo base_url();?>Main/activity_log"> Activity Log</a>	
+		      	</li>
 		    </ul>
 		    <ul class="navbar-nav">
 		    	<li class="nav-item">

@@ -33,12 +33,18 @@ class Main extends CI_Controller {
 		{
 			$user_name = $login_result->name;
 			$account_type = $login_result->account_type;
+			$account_id = $login_result->account_id;
 			$session_data = array(
+									'account_id' => $account_id,
 									'username' => $username,
 									'name' => $user_name,
 									'account_type' => $account_type
 								 );
 			$this->session->set_userdata($session_data);
+			$activity = "Logged in";
+			$activity_id = "N/A";
+			$this->Main_model->insert_activity_log($activity, $activity_id);
+
 			if($account_type === "Admin")
 			{
 				redirect('Main/admin_dashboard');
@@ -59,6 +65,9 @@ class Main extends CI_Controller {
 
 	public function logout()
   	{
+  		$activity = "Logged out";
+		$activity_id = "N/A";
+		$this->Main_model->insert_activity_log($activity, $activity_id);
     	$this->session->unset_userdata('username');
     	$this->session->unset_userdata('name');
       	redirect('Main');
@@ -94,6 +103,8 @@ class Main extends CI_Controller {
 		$data["fr_details"] = $this->Main_model->get_flat_rate();
 		$data["deluxe_details"] = $this->Main_model->get_deluxe();
 		$data["sd_details"] = $this->Main_model->get_super_deluxe();
+		$data["accommodation"] = $this->Main_model->get_accommodation();
+		$data["recent_checkout"] = $this->Main_model->get_recent_checkouts();
 		date_default_timezone_set('Asia/Manila');
 		$date_today = date('Y-m-d');
 		$data["co_details"] = $this->Main_model->get_today_checkout($date_today);
@@ -118,7 +129,27 @@ class Main extends CI_Controller {
 	{
 		$data["co_details"] = $this->Main_model->get_checkout_details($checkout_id);
 		// print_r($data);
-		$this->load->view('soa', $data);
+		$this->load->view('report/statement_of_account', $data);
+	}
+
+	public function activity_log()
+	{
+		$data["activity_log"] = $this->Main_model->activity_log_mdl();
+		$this->load->view('admin/activity_log', $data);
+	}
+
+	public function activity_log_report_all()
+	{
+		$data["ac_records"] = $this->Main_model->ac_report_all_mdl();
+		$this->load->view('report/activity_log_report', $data);
+	}
+
+	public function activity_log_selected_report()
+	{
+		$from_date = $this->input->post('from_date');
+		$to_date = $this->input->post('to_date');
+		$data["ac_records"] = $this->Main_model->ac_report_selected_mdl($from_date, $to_date);
+		$this->load->view('report/activity_log_report', $data, $from_date, $to_date);
 	}
 
 }

@@ -45,7 +45,7 @@ class Book_model extends CI_Model {
 	public function insert_accommodation($data)
 	{
 		$query = $this->db->insert('accommodation', $data);
-		return $query;
+		return $this->db->insert_id();
 	}
 
 	public function change_availability($rt, $vr, $availability)
@@ -66,7 +66,7 @@ class Book_model extends CI_Model {
 	public function checkout_mdl($data)
 	{
 		$query = $this->db->insert('checkout', $data);
-		return $query;
+		return $this->db->insert_id();
 	}
 
 	public function remove_accommodation($acc_id)

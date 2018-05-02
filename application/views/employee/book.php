@@ -15,30 +15,40 @@
 		  </button>
 		  <div class="collapse navbar-collapse" id="navbarNav">
 		    <ul class="navbar-nav mr-auto">
-		      <li class="nav-item active">
-		      	<?php if($this->session->userdata('account_type') === "Admin")
-		      	{ ?>
-		        	<a class="nav-link" href="<?php echo base_url();?>Main/admin_dashboard">Dashboard<span class="sr-only">(current)</span></a>
-		      	<?php 
-		      	}
-		      	elseif($this->session->userdata('account_type') === "Employee"){ ?>
-		        	<a class="nav-link" href="<?php echo base_url();?>Main/employee_dashboard">Dashboard<span class="sr-only">(current)</span></a>
-		      	<?php 
-		      	} ?>
-		      </li>
-		      <li class="nav-item">
-		      	<?php if($this->session->userdata('account_type') === "Admin")
-		      	{?>
-		       		<a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting">Room Prices</a>
-		       	<?php }
-		       	else
-		       	{
+		      	<li class="nav-item active">
+			      	<?php if($this->session->userdata('account_type') === "Admin")
+			      	{ ?>
+			        	<a class="nav-link" href="<?php echo base_url();?>Main/admin_dashboard">Dashboard<span class="sr-only">(current)</span></a>
+			      	<?php 
+			      	}
+			      	elseif($this->session->userdata('account_type') === "Employee"){ ?>
+			        	<a class="nav-link" href="<?php echo base_url();?>Main/employee_dashboard">Dashboard<span class="sr-only">(current)</span></a>
+			      	<?php 
+			      	} ?>
+		      	</li>
+			    <li class="nav-item">
+			      	<?php if($this->session->userdata('account_type') === "Admin")
+			      	{?>
+			       		<a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting">Room Prices</a>
+			       	<?php }
+			       	else
+			       	{
 
-		       	} ?>
-		      </li>
-		      <li class="nav-item">
-		        <a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
-		      </li>
+			       	} ?>
+		    	</li>
+		      	<li class="nav-item">
+		        	<a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
+		      	</li>
+	        	<li class="nav-item">
+		      		<?php if($this->session->userdata('account_type') === "Admin") 
+		      		{?>
+			      		<a class="nav-link" href="<?php echo base_url();?>Main/activity_log"> Activity Log</a>	
+			      	<?php }
+			      	else
+		    	  	{
+
+		      		} ?>
+		      	</li>
 		    </ul>
 		    <ul class="navbar-nav">
 		    	<li class="nav-item">

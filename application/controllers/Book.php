@@ -133,6 +133,9 @@ class Book extends CI_Controller {
 		{
 			$availability = "Occupied";
 			$this->Book_model->change_availability($rt, $vr, $availability);
+			$activity = "Accommodated a guest";
+			$activity_id = $result;
+			$this->Main_model->insert_activity_log($activity, $activity_id);
 			
 		}
 		else
@@ -158,6 +161,9 @@ class Book extends CI_Controller {
 
 		if($result)
 		{
+			$activity = "Changed room price of $room_type";
+			$activity_id = "N/A";
+			$this->Main_model->insert_activity_log($activity, $activity_id);
 			$this->session->set_flashdata('price_update', 'You have successfully updated the room price.');
 			redirect('Main/room_prices_setting');
 		}
@@ -220,10 +226,14 @@ class Book extends CI_Controller {
 						 );
 		}
 		$this->load->model('Book_model');
-		$result =$this->Book_model->checkout_mdl($data);
+		$result = $this->Book_model->checkout_mdl($data);
 		 
 		if($result)
-		{
+		{	
+			$activity = "Checkout a guest";
+			$activity_id = $result;
+			$this->Main_model->insert_activity_log($activity, $activity_id);
+
 			$result1 = $this->Book_model->remove_accommodation($acc_id);
 			if($result1)
 			{

@@ -23,12 +23,15 @@
 	        	<a class="nav-link" href="<?php echo base_url();?>Main/room_prices_setting">Room Prices</a>
 	      	</li>
 	      	<li class="nav-item">
-		        	<a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
+	        	<a class="nav-link" href="<?php echo base_url(); ?>Book">Accommodate</a>
+	      	</li>
+	      	<li class="nav-item">
+	      		<a class="nav-link" href="<?php echo base_url();?>Main/activity_log"> Activity Log</a>	
 	      	</li>
 	    </ul>
 	    <ul class="navbar-nav">
 	    	<li class="nav-item">
-	    		<span class="navbar-text"> Signed in as: <?php echo $this->session->userdata('name');?> <small class="text-muted"> (<?php echo $this->session->userdata('account_type'); ?>)</small></span>
+	    		<span class="navbar-text"> Signed in as: <?php echo $this->session->userdata('name');?> <small class="text-muted"> (<?php echo $this->session->userdata('account_type'); ?>) </small></span>
 	    	</li>
 	    </ul>
 	    <ul class="navbar-nav">
@@ -49,7 +52,7 @@
 							<div class="pull-right">
 								<div class="dropdown">
 								  <button class="btn btn-outline-info btn-large dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								    Notifications <span class="badge badge-dark"><?php echo count($co_details) ?></span>
+								    Notifications <span class="badge badge-dark" id="notif_count_id"></span>
 								  </button>
 								  	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 								  		<?php 
@@ -62,14 +65,28 @@
 											$warning_time_notif = DateTime::createFromFormat('H:i', $checkout_time_warning_notif);
 											$warning_time_notif-> sub(new DateInterval('PT2H'));
 											$co_warning_time_notif = $warning_time_notif->format('H:i');
+											
+											if($date_today_notif > $co->checkout_date)
+											{
+												echo 
+													'
+														<p class="text-danger notif_count">
+															<small>
+																Room '.$co->room_id.' ('.$co->guest_name.') : OVERSTAYING '.$co->checkout_date.' - '.$co->checkout_time.'.
+															</small>
+														</p> 
+													';
+											}
 											if($date_today_notif === $co->checkout_date)
 											{
 												if($time_today_notif >= $co->checkout_time)
 												{
 													echo 
 													'
-														<p class="text-danger"> 
-															Room '.$co->room_id.' ('.$co->guest_name.') : OVERTIME '.$co->checkout_time.'.
+														<p class="text-danger notif_count"> 
+															<small>
+																Room '.$co->room_id.' ('.$co->guest_name.') : OVERSTAYING '.$co->checkout_time.'.
+															</small>
 														</p> 
 													';
 												}
@@ -77,15 +94,13 @@
 												{
 													echo 
 													'
-														<p class="text-warning">
-															Room '.$co->room_id.' ('.$co->guest_name.'): Will checkout at '.$co->checkout_time.'.
+														<p class="text-warning notif_count">
+															<small>
+																Room '.$co->room_id.' ('.$co->guest_name.'): Will checkout at '.$co->checkout_time.'.
+															</small>
 														</p>
 													';
 												}
-											}
-											else
-											{
-												echo "No checkout for today.";
 											}
 										}
 										?>
@@ -294,7 +309,7 @@
 						<div class="col-md-12">
 							<h2><strong>Accommodations</strong></h2>
 							<br>
-							<table id="table1" class="table table-bordered table-striped table-hover">
+							<table id="table1" class="table table-bordered table-hover">
 								<thead>
 									<tr>
 										<th>Guest</th>
@@ -333,7 +348,7 @@
 											}
 											elseif($time_today >= $co_warning_time && $time_today < $ac->checkout_time)
 											{
-
+												$overstaying = FALSE;
 												echo 
 												'
 													<tr class="table-warning">
@@ -350,6 +365,7 @@
 										}
 										else
 										{
+											$overstaying = FALSE;
 											echo 
 											'
 												<tr>
@@ -575,5 +591,11 @@
 	      });
 	    });
 	 </script>
+ 	<script type="text/javascript">
+		$(document).ready(function(){
+			var count = $('.notif_count').length
+			$('#notif_count_id').text(count)
+		});
+	</script>
 </body>
 </html>

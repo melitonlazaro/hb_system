@@ -129,7 +129,6 @@ class Main_model extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->from('accommodation');
-		$this->db->where('checkout_date', $date_today);
 		$query = $this->db->get();
 		return $query->result();
 	}
@@ -158,6 +157,54 @@ class Main_model extends CI_Model {
 		$this->db->from('checkout');
 		$query = $this->db->get();
 		return $query->row();
+	}
+
+	public function activity_log_mdl()
+	{
+		$this->db->select('*');
+		$this->db->from('activity_log');
+		$query = $this->db->get();
+		return $query->result(); 
+	}
+
+	public function insert_activity_log($activity, $activity_id)
+	{
+		$employee_id = $this->session->userdata('account_id');
+		$employee_name = $this->session->userdata('name');
+		$account_type = $this->session->userdata('account_type');
+		date_default_timezone_set('Asia/Manila');
+		$date = date('Y-m-d');
+		$time = date('H:i');
+		$data = array(
+						'log_id' => NULL,
+						'employee_id' => $employee_id,
+						'employee_name' => $employee_name,
+						'account_type' => $account_type,
+						'activity' => $activity,
+						'activity_id' => $activity_id,
+						'date' => $date,
+						'time' => $time
+					 );
+		$this->db->insert('activity_log', $data);
+
+	}
+
+	public function ac_report_all_mdl()
+	{
+		$this->db->select('*');
+		$this->db->from('activity_log');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function ac_report_selected_mdl($from_date, $to_date)
+	{
+		$this->db->select('*');
+		$this->db->where('date >=', $from_date);
+		$this->db->where('date <=', $to_date);
+		$this->db->from('activity_log');
+		$query = $this->db->get();
+		return $query->result();
 	}
 }
 ?>
