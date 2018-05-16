@@ -377,7 +377,7 @@
 	 </script>
   	<script>  
 		 $(document).ready(function(){  
-		      $('#email').change(function(){  
+		      $('#email').keyup(function(){  
 		           var email = $('#email').val();  
 		           if(email != '')  
 		           {  
