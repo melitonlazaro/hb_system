@@ -67,21 +67,41 @@ class Book extends CI_Controller {
 
 	public function email_form_validation()
 	{
-		$this->load->library('form_validation');
-		$this->load->helper('email');
 		$email = $this->input->post('email');
-			$this->form_validation->set_rules('email', 'Email', 'is_unique[guest_profile.email]');
-			if($this->form_validation->run() == FALSE)
+
+		if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+		{
+			echo '<label class="text-danger"><i class="fa fa-times"></i> Invalid Email</i></label>';
+		}
+		else
+		{
+			$this->load->model('Book_model');
+			$result = $this->Book_model->is_email_available($email);
+			if($result)
 			{
-				// $validates = validation_errors();
-				$validates = 1;
+				echo '<label class="text-danger"><i class="fa fa-times"></i> Email Already registered</label>';
 			}
 			else
 			{
-				$validates = 0;
+				echo '<label class="text-success"><i class="fa fa-check"></i> Email is available </label>';
 			}
-			echo $validates;
-			exit;
+		}
+
+		// $this->load->library('form_validation');
+		// $this->load->helper('email');
+		// $email = $this->input->post('email');
+		// 	$this->form_validation->set_rules('email', 'Email', 'is_unique[guest_profile.email]');
+		// 	if($this->form_validation->run() == FALSE)
+		// 	{
+		// 		// $validates = validation_errors();
+		// 		$validates = 1;
+		// 	}
+		// 	else
+		// 	{
+		// 		$validates = 0;
+		// 	}
+		// 	echo $validates;
+		// 	exit;
 	}
 
 	public function get_vacant_room()

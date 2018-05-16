@@ -160,6 +160,7 @@
 								</div>
 								<div class="col-md-9">
 									<input type="text" name="email" id="email" class="form-control" required>
+									<span id="email_result"></span> 
 								</div>
 							</div>
 							<br>
@@ -374,31 +375,24 @@
 			
 	 	});
 	 </script>
-	 <script>
-		$(document).ready(function(){
-		    $("#email").keyup(function(){
-		        var email = $('#email').val();
-		        $.ajax({
-		        	type: "POST",
-		        	url: "<?php echo site_url();?>Book/email_form_validation",
-		        	data: {email:email},
-		        	success:function(data)
-		        	{
-		        		if($data = 1)
-		        		{
-		        			console.log(data)
-		        			$('#email').addClass("is-valid");
-		        		}	
-		        		else
-		        		{
-		        			console.log(data)
-		        			$('#email').addClass("is-invalid");
-		        		}
-		        	}
-		        });
-		    });
-		});
-	</script>
+  	<script>  
+		 $(document).ready(function(){  
+		      $('#email').change(function(){  
+		           var email = $('#email').val();  
+		           if(email != '')  
+		           {  
+		                $.ajax({  
+		                     url:"<?php echo base_url(); ?>Book/email_form_validation",  
+		                     method:"POST",  
+		                     data:{email:email},  
+		                     success:function(data){  
+		                          $('#email_result').html(data);  
+		                     }  
+		                });  
+		           }  
+		      });  
+		 });  
+	 </script>
 	 <script type="text/javascript">
 	 	$('#profiling_btn').click(function(event)
 	 	{

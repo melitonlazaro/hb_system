@@ -76,20 +76,18 @@ class Book_model extends CI_Model {
 		return $query;
 	}
 
-	public function check_email_availability_mdl($email)
+	public function is_email_available($email)
 	{
-		$this->db->select('*');
-		$this->db->from('guest_profile');
 		$this->db->where('email', $email);
-		$query = $this->db->get();
-		if($query->num_rows() > 0)
-		{
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
+		$query = $this->db->get('guest_profile');
+		if($query->num_rows() > 0)  
+       	{  
+            return true;  
+      	}  
+      	else  
+       	{  
+            return false;  
+      	}  
 	}
 
 
